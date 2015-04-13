@@ -1,0 +1,25 @@
+{
+  "name": "nonprofitCMS",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nlefebvre/nonprofitCMS.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nlefebvre/nonprofitCMS/issues"
+  },
+  "homepage": "https://github.com/nlefebvre/nonprofitCMS",
+  "devDependencies": {
+    "grunt": "^0.4.5"
+  },
+  "dependencies": {
+    "express": "^4.12.3"
+  }
+}
