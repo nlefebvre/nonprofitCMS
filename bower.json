@@ -1,0 +1,22 @@
+{
+  "name": "nonprofitCMS",
+  "version": "0.0.0",
+  "homepage": "https://github.com/nlefebvre/nonprofitCMS",
+  "authors": [
+    "Lefebvre",
+    "Nicolas <Nicolas_Lefebvre@intuit.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "www/libs",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.4",
+    "jquery": "~2.1.3"
+  }
+}
