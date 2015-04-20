@@ -29,7 +29,7 @@ function StealAGoogleBike() {
 function myFactory(methodOfTransport){
    switch(methodOfTransport) {
     case "walk" :
-      return WalkWithMyFeet();
+      return new WalkWithMyFeet();
     case "drive" :
       return new DriveMyCar();
     case "steal" :

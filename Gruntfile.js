@@ -2,26 +2,34 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     webServer: {
-      rootFolder: "www",
-      port: 8081
+      rootFolder: "app/www",
+      port: 8081,
+      callback: function() {
+        grunt.log.writeln("Web server listening on port " + this.port);
+      }
+    },
+    mongoServer: {
+      host: "localhost",
+      port: 27017,
+      dbName: "Non-profit"
     }
   });
 
 
-  grunt.registerTask("webServer", function(port) {
+  grunt.registerTask("webServer", "Start the web-server" function(port) {
 
     var
-      webServer = require("./web-server"),
-      webServerConfig = grunt.config("webServer");
+      httpServer = require("./app/http-server"),
+      app = require("./app/app"),
+      config = {
+        webSockets: require("./app/web-sockets"),
+        httpServer: grunt.config("httpServer"),
+        mongoServer: grunt.config("mongoServer")
+      };
 
     this.async();
-
-    webServerConfig.port = port || webServerConfig.port;
-    console.log(webServerConfig.port);
-
-    webServer(webServerConfig,  function() {
-      grunt.log.writeln("Web server listening on port " + webServerConfig.port);
-    });
+    config.app = app(config);
+    httpServer(config);
 
   });
 
