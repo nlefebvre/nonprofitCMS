@@ -1,4 +1,4 @@
-module.exports = function(webServer) {
+module.exports = function(webServer, logger) {
   "use strict";
 
   var
@@ -7,22 +7,24 @@ module.exports = function(webServer) {
 
   wss.on("connection", function(ws) {
 
-    console.log("web sockets open");
+    logger.info("web sockets open");
 
     ws.on("error", function(data) {
-      console.log("web sockets error");
+      logger.error("web sockets error");
     });
 
     ws.on("close", function(data) {
-      console.log("web sockets closed");
+      logger.info("web sockets closed");
     });
 
     ws.on("message", function(msg) {
       var data = JSON.parse(msg);
-      console.log("message received: " + data.source);
-
+      if(data.messageType === "error") {
+        logger.error(data.message)
+      }
+      //logger.info("message received: " + data.source);
       ws.send(JSON.stringify({
-        source: "echo: " + data.source
+        status: "OK"
       }));
 
     });

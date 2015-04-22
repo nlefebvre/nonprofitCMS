@@ -6,6 +6,10 @@ function MyWebSocket(webSocketServerURL) {
     ws.addEventListener("open", function() {
       resolve(ws);
     });
+		ws.addEventListener("error", function(e) {
+      console.log("WebSocket error.");
+			reject();
+    });
   });
 }
 

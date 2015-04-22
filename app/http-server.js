@@ -1,4 +1,4 @@
-module.exports = function(config) {
+module.exports = function(config, logger) {
 
   var
     http = require("http");
@@ -6,6 +6,7 @@ module.exports = function(config) {
   config.httpServer.callback =
     config.httpServer.callback.bind(config.httpServer);
 
-  config.webSockets(http.createServer(config.app))
-    .listen(config.httpServer.port, config.httpServer.callback);
+   config.webSockets(http.createServer(config.app), logger)
+     .listen(config.httpServer.port, config.httpServer.callback);
+  //http.createServer(config.app).listen(config.httpServer.port, config.httpServer.callback);
 };
