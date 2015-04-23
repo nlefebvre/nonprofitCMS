@@ -1,5 +1,8 @@
 module.exports = function(grunt) {
 
+  var
+    path = require("path");
+
   grunt.initConfig({
     httpServer: {
       rootFolder: "app/www",
@@ -26,30 +29,72 @@ module.exports = function(grunt) {
           timestamp: true
         }
       }
+    },
+    handlebars: {
+      compile: {
+        options: {
+          namespace: "templates",
+          processName: function(filePath) {
+            return path.basename(filePath, ".min.hbs");
+          },
+          processPartialName: function(filePath) {
+            return path.basename(filePath, ".min.hbs");
+          }
+        },
+        files: {
+          "app/www/js/templates.js": "app/templates-min/**/*.min.hbs"
+        }
+      }
+    },
+    htmlmin: {
+      templates: {
+        options: {
+          removeComments: true,
+          collapseWhitespace: true
+        },
+        expand: true,
+        cwd: 'app/templates',
+        src: '*.hbs',
+        dest: 'app/templates-min/',
+        ext: ".min.hbs"
+      }
+    },
+    watch: {
+      templates: {
+        files: ["app/templates/**/*.hbs"],
+        tasks: ["htmlmin", "handlebars"],
+        options: {
+          spawn: false
+        }
+      }
     }
   });
 
+  grunt.loadNpmTasks("grunt-contrib-watch");
+  grunt.loadNpmTasks("grunt-contrib-handlebars");
+  grunt.loadNpmTasks("grunt-contrib-htmlmin");
 
   grunt.registerTask("webServer", "Start the web-server", function(port) {
 
     var
       httpServer = require("./app/http-server"),
       app = require("./app/app"),
-      logger = require("./app/logger")(grunt.config("loggerConfig")),
+      logger = global.logger = require("./app/logger")(grunt.config("loggerConfig")),
       config = {
         webSockets: require("./app/web-sockets"),
         httpServer: grunt.config("httpServer"),
         mongoServer: grunt.config("mongoServer")
       };
 
-    this.async();
+    //This cannot be async with watch 
+    //this.async();
 
-    config.logger = logger;//Giving logger to app
+    logger.info("starting app...");
     config.app = app(config);
     httpServer(config, logger);
 
   });
 
-  grunt.registerTask("default", "Start web server", ["webServer"]);
+  grunt.registerTask("default", "Start web server", ["htmlmin","handlebars","webServer","watch"]);
 
 };

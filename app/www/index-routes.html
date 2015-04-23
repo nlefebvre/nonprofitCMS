@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+
+<html>
+
+  <head>
+    <title>Home Page</title>
+     <link href='libs/bootstrap/dist/css/bootstrap.min.css' rel="stylesheet">
+    <link href='libs/bootstrap/dist/css/bootstrap-theme.min.css' rel="stylesheet">
+    <link href='css/style.css' rel"stylesheet">
+  </head>
+
+  <style>
+  </style>
+  <body>
+    <!-- <button id="log-me-in">Log Me In</button>
+    <br><br>
+    <button id="get-all-contents">Get All Contents</button>
+    <br><br>-->
+    <div id="view-content">
+      <button id="homeButton">Home</button>
+      <button id="menuButton">Menu</button>
+      <button id="greensButton">Greens</button>
+
+    </div>
+
+    <script src="libs/jquery/dist/jquery.js"></script>
+    <script src="libs/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="libs/underscore/underscore.js"></script>
+    <script src="libs/backbone/backbone.js"></script>
+    <script src="libs/handlebars/handlebars.js"></script>
+    <script src="js/templates.js"></script>
+    <script src="js/BaseModel.js"></script>
+
+    <script>
+      var AppRouter = Backbone.Router.extend({
+        routes:{
+          "":"homeCookin",
+          "menu":"menuOfHomeCookin",
+          "menu/:item":"homeCookinMenuItem"
+        },
+        homeCookin: function(){
+          console.log("home cookin")
+        },
+        menuOfHomeCookin: function(){
+          console.log("menu of home cookin")
+        },
+        homeCookinMenuItem: function(item){
+          console.log("home cookin menu item: " + item);
+        }
+      });
+
+      var appRouter = new AppRouter();
+      Backbone.history.start({pushState: false})
+
+      $("#homeButton").on("click", function(){
+        appRouter.navigate("/", {trigger:true})
+      });
+      $("#menuButton").on("click", function(){
+        appRouter.navigate("/menu", {trigger:true})
+      });
+      $("#greensButton").on("click", function(){
+        appRouter.navigate("/menu/greens", {trigger:true})
+      });
+
+    </script>
+
+
+
+  </body>

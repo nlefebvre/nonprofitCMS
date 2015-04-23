@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+
+<html>
+
+  <head>
+    <title>Home Page</title>
+     <link href='libs/bootstrap/dist/css/bootstrap.min.css' rel="stylesheet">
+    <link href='libs/bootstrap/dist/css/bootstrap-theme.min.css' rel="stylesheet">
+    <link href='css/style.css' rel"stylesheet">
+  </head>
+
+  <style>
+  </style>
+  <body>
+    <!-- <button id="log-me-in">Log Me In</button>
+    <br><br>
+    <button id="get-all-contents">Get All Contents</button>
+    <br><br>-->
+    <div id="view-content"></div>
+
+    <script src="libs/jquery/dist/jquery.js"></script>
+    <script src="libs/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="libs/underscore/underscore.js"></script>
+    <script src="libs/backbone/backbone.js"></script>
+    <script src="libs/handlebars/handlebars.js"></script>
+    <script src="js/templates.js"></script>
+    <script src="js/BaseModel.js"></script>
+
+    <script>
+      var TransactionView = Backbone.View.extend({
+        template: templates["donations"],
+        render: function() {
+          var html = this.template(this.model);
+          this.$el.html(html);
+          //another option:
+          //this.el.innerHtml = html
+        },
+        initialize: function(options) {
+          this.options = options;
+          console.dir(options);
+        },
+      });
+
+      var tView = new TransactionView({
+        el: $("#view-content"),
+        //template: templates["donations"]
+        model: {
+          amount:1,
+          name:"potato",
+          created: Date.now(),
+          cc4digits: 1234
+        }
+      });
+
+      tView.render();
+
+      //console.dir(myView);
+
+
+    </script>
+
+
+
+  </body>

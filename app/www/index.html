@@ -12,13 +12,130 @@
   <style>
 
   </style>
-<h1>Home</h1>
 
 
   <body>
+    <h1>Home</h1>
+    <button id="log-me-in">Log Me In</button>
+    <button id="get-all-transactions">Get All Transaction</button>
+    <button id="add-transaction">Add Transaction</button>
+
+
+
     <script src="libs/jquery/dist/jquery.js"></script>
     <script src="libs/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="libs/underscore/underscore.js"></script>
+    <script src="libs/backbone/backbone.js"></script>
     <script src="js/WebSocketLogging.js"></script>
+
+    <script>
+
+      var BaseModel = Backbone.Model.extend({
+        sync: function (method, model, options){
+          if (!options){
+            options = {};
+          }
+          options.beforeSend = function(xhr) {
+            console.log("before send");
+            console.dir(xhr);
+            xhr.setRequestHeader("X-CSRF-Token", window.csrfToken);
+          };
+          Backbone.sync.call(this, method,model,options)
+          .then(function(data, status, xhr){
+            window.csrfToken = xhr.getResponseHeader("X-CSRF-Token");
+            console.dir(arguments);
+          });
+        },
+        idAttribute: "_id"
+      });
+
+      var Donation = BaseModel.extend({
+        urlRoot: "/api/donation",
+        defaults: {
+          amount : 0,
+          cc4digits : 1234,
+          created : Date.now(),
+          name : null,
+        },
+        initialize: function() {
+          /*this.set("_id", null);
+          this.set("accountNumber", null);
+          this.set("payee", null);
+          this.set("taxItem", null);
+          this.set("amount", 39);
+          this.set("description", null);*/
+          this.on("change",function(){
+            console.dir(arguments);
+            console.log("My model changed!");
+          })
+        },
+        // constructor: function(){
+        //   //this.doStuff
+        //   Backbone.Model.apply(this, arguments);
+        // }
+      });
+
+      var t = new Donation();
+      t.set("amount", 345);
+      t.set("name", "Intuit");
+      t.set("cc4digits", 4321);
+      t.set("Date", (new Date()).getDate());
+
+      console.log(t.get("accountNumber"));
+      console.dir(t.attributes);
+
+      t.save(null, { success: function() {
+				console.dir(t.attributes);
+			}});
+
+      window.addEventListener("DOMContentLoaded", function() {
+
+        document.getElementById("log-me-in")
+        	.addEventListener("click", function() {
+
+        		var xhr = new XMLHttpRequest();
+        		xhr.onreadystatechange = function() {
+        			if (xhr.readyState === 4) {
+
+        				window.csrfToken = xhr.getResponseHeader("X-CSRF-Token");
+
+        			}
+        		}
+
+        		xhr.open("POST", "/api/accounts/authenticate");
+            xhr.setRequestHeader("Content-Type", "application/json");
+        		xhr.send(JSON.stringify({
+        			"username": "admin",
+        			"password": "password"
+        		}));
+            console.log("log in attempt");
+
+        });
+
+        document.getElementById("add-transaction")
+        	.addEventListener("click", function() {
+
+            var t = new Donation();
+            t.set("amount", 345);
+            t.set("name", "Intuit");
+            t.set("cc4digits", 4321);
+            t.set("Date", (new Date()).getDate());
+
+        		t.save(null, {
+        			success: function() {
+        				console.log("adding donation");
+                console.dir(t.attributes);
+        			}
+        		});
+
+        });
+
+      });
+
+
+
+
+    </script>
 
   </body>
 </html>

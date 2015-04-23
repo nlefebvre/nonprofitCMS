@@ -4,7 +4,10 @@ module.exports = function(config, mongoose) {
     express = require("express"),
     passport = require("passport"),
     crypto = require("crypto"),
-    accountRouter = express.Router();
+    Promise = require("bluebird"),
+    csrf = require("csrf")(),
+    accountRouter = express.Router(),
+    logger = global.logger;
 
 
   // passport.serializeUser(function(user, done) {
@@ -59,61 +62,31 @@ module.exports = function(config, mongoose) {
       //var query = AccountModel.where(acct);
       AccountModel.find(req.body, function(err, result) {
         if (err) {
-            console.log("Account error: " + err);
+            logger.error("Account error: " + err);
             res.status(500).json(err);
             return;
         }
-        //  else if (result.length !==1){
-        //   console.log("No username or password");
-        //   res.json();
-        //   return;
-        // }
+        else if (result.length !==1){
+          logger.error("No username or password");
+          res.status(401).json({msg:'Incorrect username/pass'});
+          return;
+        }
         req.login(result, function(err) {
-
           if (err) {
             console.dir(err);
             res.status(500).json(err);
             return;
           }
-          console.log("Success");
-          res.json(result);
+
+          csrf.secret().then(function(secret) {
+            req.session.csrfSecret = secret;
+            res.set("X-CSRF-Token", csrf.create(req.session.csrfSecret));
+            logger.info("Success (logged in)");
+            res.json(result);
+          });
         });
-        //res.json(result);
       })
     });
-    // .post(, function(req, res, next) {
-    //
-    //     var passwordSalt = "salt is good for you";
-    //
-    //     var user = {
-    //       id: 1,
-    //       name: "Test User",
-    //       username: req.body.username
-    //     };
-    //
-    //     function sha1(value) {
-    //       return crypto.createHash("sha1").update(value.toString()).digest("hex");
-    //     }
-    //
-    //     console.log(sha1(req.body.password + passwordSalt));
-    //
-    //
-    //     req.login(user, function(err) {
-    //
-    //       if (err) {
-    //         console.dir(err);
-    //         res.status(500).json(err);
-    //         return;
-    //       }
-    //
-    //       res.json(user);
-    //     });
-    //
-    //   });
-
-
-
-
 
   return accountRouter;
 

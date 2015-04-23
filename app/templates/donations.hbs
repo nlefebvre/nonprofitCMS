@@ -1,0 +1,28 @@
+<div>
+  <h3>Donations</h3>
+  <table class="table table-striped table-hover">
+    <thead>
+      <tr>
+        <th>Amount</th>
+        <th>Last 4 digits</th>
+        <th>Date created</th>
+        <th>Name</th>
+        <th>Buttons</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each donations}}
+      <tr>
+        <td>{{amount}}</td>
+        <td>{{cc4digits}}</td>
+        <td>{{created}}</td>
+        <td>{{name}}</td>
+        <td>
+          <button visibility="hidden" class="btn btn-primary">View</button>
+          <button visibility="hidden" class="btn btn-warning">Delete</button>
+        </td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>

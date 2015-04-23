@@ -65,6 +65,5 @@ lws.onReceiveObject(function(o) {
   console.log("Received status: " + o.status);
 });
 
-lws.sendErrMessage("user logged in - lws");
-lws.sendLogMessage("user logged out - lws");
-lws.sendLogMessage("error occurred - lws");
+//lws.sendErrMessage("Test log err msg");
+//lws.sendLogMessage("Test log msg (not error)");

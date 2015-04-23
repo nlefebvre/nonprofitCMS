@@ -7,9 +7,10 @@ module.exports = function(config) {
     mongoose = require("mongoose"),
     session = require('express-session'),
     passport = require("passport"),
-    crypto = require("crypto"),
+    Promise = require("bluebird"),
+    csrf = require("csrf")(),
     app = express(),
-    logger = config.logger;
+    logger = global.logger;
 
   passport.serializeUser(function(user, done) {
     done(null, user);
@@ -29,6 +30,7 @@ module.exports = function(config) {
   app.use(passport.session());
 
   app.use("/api", bodyParser.json());
+  app.use("/api", bodyParser.urlencoded({ extended: true }));
   app.use("/api", multer({
   	dest: "./app/uploads",
   	rename: function(fieldName, fileName) {
@@ -52,11 +54,66 @@ module.exports = function(config) {
       return fileName;
     }
   }));
+  app.use("/api", require("./routers/users.js")(config, mongoose));
+  app.use("/api", function(req, res, next) {
+
+      if (!req.user) {
+        logger.error("Not a valid user");
+        res.status(401).json({
+          msg: 'not logged in'
+        });
+        return;
+      }
+
+      if (!csrf.verify(req.session.csrfSecret, req.get("X-CSRF-Token"))){
+        logger.log("not a verified user");
+        res.status(401).json({
+          msg:'not loggged in'
+        });
+        return;
+      }
+
+      csrf.secret().then(function(secret) {
+        req.session.csrfSecret = secret;
+        res.set("X-CSRF-Token", csrf.create(req.session.csrfSecret));
+        next();
+      })
+  });
+
+
+
+  // app.use("/api", function(req, res, next) {
+  //
+	// 	if (!req.user) {
+	// 		console.log("not a valid user");
+	// 		res.status(401).json({
+	// 			msg: 'not logged in'
+	// 		});
+	// 		return;
+	// 	}
+  //
+	// 	if (!csrf.verify(req.session.csrfSecret, req.get("X-CSRF-Token"))) {
+	// 		console.log("not a valid token");
+	// 		res.status(401).json({
+	// 			msg: 'not logged in'
+	// 		});
+	// 		return;
+	// 	}
+  //
+	// 	csrf.secret().then(function(secret) {
+	// 		req.session.csrfSecret = secret;
+	// 		res.set("X-CSRF-Token", csrf.create(req.session.csrfSecret));
+	// 		next();
+	// 	});
+  //
+  //
+	// });
+  //
+
+
   app.use("/api", require("./routers/content.js")(config, mongoose));
   app.use("/api", require("./routers/donations.js")(config, mongoose));
   app.use("/api", require("./routers/gallery.js")(config, mongoose));
-  app.use("/api", require("./routers/users.js")(config, mongoose));
-
 
   return app;
 };

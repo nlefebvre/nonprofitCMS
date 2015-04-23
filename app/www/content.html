@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+
+<html>
+
+  <head>
+    <title>Home Page</title>
+     <link href='libs/bootstrap/dist/css/bootstrap.min.css' rel="stylesheet">
+    <link href='libs/bootstrap/dist/css/bootstrap-theme.min.css' rel="stylesheet">
+    <link href='css/style.css' rel"stylesheet">
+  </head>
+
+  <style>
+  </style>
+  <body>
+    <button id="log-me-in">Log Me In</button>
+    <br><br>
+    <button id="get-all-contents">Get All Contents</button>
+    <br><br>
+    <div id="view"></div>
+
+    <script src="libs/jquery/dist/jquery.js"></script>
+    <script src="libs/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="libs/underscore/underscore.js"></script>
+    <script src="libs/backbone/backbone.js"></script>
+    <script src="libs/handlebars/handlebars.js"></script>
+    <script src="js/templates.js"></script>
+    <script src="js/BaseModel.js"></script>
+
+    <script>
+
+          var Content = BaseModel.extend({
+            urlRoot: "/api/content",
+            defaults: {
+              Title : null,
+              modifie : null,
+              created : null,
+              Author : null,
+              Category : "none"
+            }
+          });
+
+          var Contents = BaseCollection.extend({
+            model: Content,
+            url: "/api/contents"
+          });
+
+          var contents = new Contents();
+
+
+
+
+
+          //Two buttons... one to log in, one to see table?
+          window.addEventListener("DOMContentLoaded", function() {
+
+            document.getElementById("get-all-contents")
+              .addEventListener("click", function() {
+                console.log(contents.models);
+                contents.fetch({
+                  success: function() {
+                    //var source = document.getElementById("content-records").innerHTML;
+                    //var source = this.templates.contents();
+                    //var template = Handlebars.compile(source);
+                    var html = this.templates.contents({
+                      contents:  contents.toJSON()
+                    });
+                    document.getElementById("view").innerHTML = html;
+                  }
+                })
+              });
+
+              document.getElementById("log-me-in")
+              .addEventListener("click", function() {
+                var xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function() {
+                  if (xhr.readyState === 4) {
+                    window.csrfToken = xhr.getResponseHeader("X-CSRF-Token");
+                  }
+                }
+
+                xhr.open("POST", "/api/accounts/authenticate");
+                xhr.setRequestHeader("Content-Type", "application/json");
+                xhr.send(JSON.stringify({
+                  "username": "admin",
+                  "password": "password"
+                }))
+              });
+
+            });
+
+    </script>
+
+
+
+  </body>
