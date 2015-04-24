@@ -29,5 +29,7 @@ node_modules
 
 #bower modules
 app/www/libs
+
+#Minified templates
 app/templates-min
 app/www/js/templates.js

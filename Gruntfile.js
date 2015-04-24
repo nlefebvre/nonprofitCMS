@@ -86,7 +86,7 @@ module.exports = function(grunt) {
         mongoServer: grunt.config("mongoServer")
       };
 
-    //This cannot be async with watch 
+    //This cannot be async with watch
     //this.async();
 
     logger.info("starting app...");
@@ -96,5 +96,7 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask("default", "Start web server", ["htmlmin","handlebars","webServer","watch"]);
+
+  //grunt.registerTask("login", "Start web server", ["htmlmin","handlebars","webServer","watch"]);
 
 };

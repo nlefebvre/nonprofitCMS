@@ -1,4 +1,47 @@
 "use strict";
+
+
+window.addEventListener("DOMContentLoaded", function() {
+
+
+  var appRouter = new AppRouter({
+		el: $("#view-content")[0]
+	});
+  Backbone.history.start({ pushState: false });
+
+  $("#donationsButton").on("click", function(){
+    console.log("donation clicked");
+    appRouter.navigate("/donations", {trigger:true})
+  });
+  $("#homeButton").on("click", function(){
+    console.log("home clicked");
+    appRouter.navigate("/", {trigger:true})
+  });
+  $("#contentsButton").on("click", function(){
+    console.log("contents clicked");
+    appRouter.navigate("/contents", {trigger:true})
+  });
+  $("#contactButton").on("click", function(){
+    console.log("contact us clicked");
+    appRouter.navigate("/contact", {trigger:true})
+  });
+
+});
+//
+// $("#homeButton").on("click", function(){
+//   appRouter.navigate("/", {trigger:true})
+// });
+// $("#menuButton").on("click", function(){
+//   appRouter.navigate("/menu", {trigger:true})
+// });
+// $("#greensButton").on("click", function(){
+//   appRouter.navigate("/menu/greens", {trigger:true})
+// });
+//
+
+
+
+
 function MyWebSocket(webSocketServerURL) {
 
   this.connected = new Promise(function(resolve, reject) {

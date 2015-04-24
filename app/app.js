@@ -55,30 +55,32 @@ module.exports = function(config) {
     }
   }));
   app.use("/api", require("./routers/users.js")(config, mongoose));
-  app.use("/api", function(req, res, next) {
+if (false){
+    app.use("/api", function(req, res, next) {
 
-      if (!req.user) {
-        logger.error("Not a valid user");
-        res.status(401).json({
-          msg: 'not logged in'
-        });
-        return;
-      }
+        if (!req.user) {
+          logger.error("Not a valid user");
+          res.status(401).json({
+            msg: 'not logged in'
+          });
+          return;
+        }
 
-      if (!csrf.verify(req.session.csrfSecret, req.get("X-CSRF-Token"))){
-        logger.log("not a verified user");
-        res.status(401).json({
-          msg:'not loggged in'
-        });
-        return;
-      }
+        if (!csrf.verify(req.session.csrfSecret, req.get("X-CSRF-Token"))){
+          logger.log("not a verified user");
+          res.status(401).json({
+            msg:'not loggged in'
+          });
+          return;
+        }
 
-      csrf.secret().then(function(secret) {
-        req.session.csrfSecret = secret;
-        res.set("X-CSRF-Token", csrf.create(req.session.csrfSecret));
-        next();
-      })
-  });
+        csrf.secret().then(function(secret) {
+          req.session.csrfSecret = secret;
+          res.set("X-CSRF-Token", csrf.create(req.session.csrfSecret));
+          next();
+        })
+    });
+  }//end if
 
 
 
